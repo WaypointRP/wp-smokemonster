@@ -1,6 +1,7 @@
 # Waypoint Smoke Monster
 
-![image](https://github.com/BackSH00TER/wp-smokemonster/assets/18689469/d3457114-d423-4574-8a34-e90681a90b3e)
+![wp-smokemonster-preview](https://github.com/WaypointRP/wp-smokemonster/assets/83190290/7882d926-bd36-4f2d-b72d-c97bd212cb54)
+
 [Preview Video](https://youtu.be/r97PeiGR7EU)
 
 Waypoint Smoke Monster is a simple script that lets the player become a flying smoke monster. The smoke monster can fly around the map, leaving a trail of smoke behind it. This can be used during Halloween events to scare players or could be used for any other purpose.
