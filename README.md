@@ -42,3 +42,6 @@ Resource monitor results:
 We currently use a slightly customized version of qb-adminmenu noclip for controlling the movement of the smoke monster. There is a bug in the native functions SetEntityCoordsNoOffset and SetEntityCoords. The bug causes the up/down movements to only sync to other clients in steps of 1.0, even though on your own client it appears to be moving slowly. As a result any up/down movements will appear to be very choppy to other clients.
 
 We found that _for some reason_, this issue does not happen while the player is in a vehicle. As a workaround, we spawn and place the player in a "dummyVehicle" and then set it to invisible. This allows the player to move around smoothly (on all clients) while in the smoke monster.
+
+## Credit
+@DonHulieo for providing insipiration and examples for structuring the framework.lua file.
