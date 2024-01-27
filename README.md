@@ -38,6 +38,8 @@ Resource monitor results:
     - Framework is only needed for CreateCallback / TriggerCallback.
 4. Choose whether you want a screen effect to be applied to the smoke monster's client via `Config.UseSmokeMonsterScreenEffect`
 
+> Note: If you are using `ox` for any of the Framework options you need to uncomment `@ox_lib/init.lua` in the fxmanifest.lua.
+
 # Notes
 We currently use a slightly customized version of qb-adminmenu noclip for controlling the movement of the smoke monster. There is a bug in the native functions SetEntityCoordsNoOffset and SetEntityCoords. The bug causes the up/down movements to only sync to other clients in steps of 1.0, even though on your own client it appears to be moving slowly. As a result any up/down movements will appear to be very choppy to other clients.
 
