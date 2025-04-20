@@ -19,13 +19,13 @@ local function LoadParticleAsset(asset)
 end
 
 -- Starts the smoke monster particle effect on the entity
----@param entity - is the entity that the particle effect will be attached to
----@param entityNetId - is the network id of the entity
+--- @param entity - is the entity that the particle effect will be attached to
+--- @param entityNetId - is the network id of the entity
 local function startSmokeMonsterParticleEffectOnEntity(entity, entityNetId)
     local particleAsset = "scr_xm_spybomb"
     local particleName = "scr_xm_spybomb_plane_smoke_trail"
     local particleScale = 0.2
-    local color = { r = 0, g = 0, b = 0 }
+    local color = { r = 0, g = 0, b = 0, }
 
     LoadParticleAsset(particleAsset)
     UseParticleFxAssetNextCall(particleAsset)
@@ -47,11 +47,11 @@ local function startSmokeMonsterParticleEffectOnEntity(entity, entityNetId)
 
     SetParticleFxLoopedAlpha(particleFxHandle, 0.6)
     SetParticleFxLoopedColour(particleFxHandle, color.r, color.g, color.b, 0)
-    
+
     particleFxHandleList[entityNetId] = {
         isSmokeMonster = true,
         particleFxHandle = particleFxHandle,
-        hasSynced = true
+        hasSynced = true,
     }
 end
 
@@ -64,30 +64,30 @@ local function toggleSmokeMonster()
 
     if isSmokeMonster then -- Toggle On
         if Config.UseSmokeMonsterScreenEffect then AnimpostfxPlay("ChopVision") end
-        TriggerEvent('wp-smokemonster:client:ToggleNoClip')
+        TriggerEvent("wp-smokemonster:client:ToggleNoClip")
 
         startSmokeMonsterParticleEffectOnEntity(entity, entityNetId)
 
         -- The particle effect is a looped effect and does not automatically sync with other clients
-        TriggerServerEvent('wp-smokemonster:server:SyncEffect', entityNetId, GetPlayerServerId(PlayerId()), true)
+        TriggerServerEvent("wp-smokemonster:server:SyncEffect", entityNetId, GetPlayerServerId(PlayerId()), true)
     else -- Toggle Off
         if Config.UseSmokeMonsterScreenEffect then AnimpostfxStop("ChopVision") end
         StopParticleFxLooped(particleFxHandleList[entityNetId].particleFxHandle, 0)
-        TriggerServerEvent('wp-smokemonster:server:SyncEffect', entityNetId, GetPlayerServerId(PlayerId()), false)
-        TriggerEvent('wp-smokemonster:client:ToggleNoClip')
+        TriggerServerEvent("wp-smokemonster:server:SyncEffect", entityNetId, GetPlayerServerId(PlayerId()), false)
+        TriggerEvent("wp-smokemonster:client:ToggleNoClip")
 
         particleFxHandleList[entityNetId] = {
             isSmokeMonster = false,
             particleFxHandle = nil,
-            hasSynced = false
+            hasSynced = false,
         }
     end
 end
 
 -- Starts/stops the smoke monster effect on the given entityNetId, if the entity exists and has not yet been synced
 -- This is used to sync the particle effect with other clients
----@param entityNetId - is the network id of the entity that the particle effect will be attached to
----@param hasSynced - is whether the particle effect for the given netId has already been synced on this client
+--- @param entityNetId - is the network id of the entity that the particle effect will be attached to
+--- @param hasSynced - is whether the particle effect for the given netId has already been synced on this client
 local function syncSmokeMonsterParticleEffect(entityNetId, hasSynced)
     if not hasSynced and NetworkDoesNetworkIdExist(entityNetId) then
         local entity = NetworkGetEntityFromNetworkId(entityNetId)
@@ -101,13 +101,13 @@ local function syncSmokeMonsterParticleEffect(entityNetId, hasSynced)
                 particleFxHandleList[entityNetId] = {
                     isSmokeMonster = false,
                     particleFxHandle = nil,
-                    hasSynced = false
+                    hasSynced = false,
                 }
             end
         end
     else
         if not NetworkDoesNetworkIdExist(entityNetId) or not DoesEntityExist(NetworkGetEntityFromNetworkId(entityNetId)) then
-            -- If entity does not exist, reset the hasSynced to false. 
+            -- If entity does not exist, reset the hasSynced to false.
             -- This is to handle a case where the entity did at exist, moved outside your culling distance and then comes back
             particleFxHandleList[entityNetId].hasSynced = false
         end
@@ -123,13 +123,13 @@ end
 
 -- Adds the entityNetId to the particleFxHandleList if it does not yet exist, else if
 -- it does exist do nothing so we dont override its fields
----@param entityNetId - is the network id of the entity that the particle effect will be attached to
+--- @param entityNetId - is the network id of the entity that the particle effect will be attached to
 local function initializeParticleFxHandleListByNetId(entityNetId)
     if particleFxHandleList[entityNetId] == nil then
         particleFxHandleList[entityNetId] = {
             isSmokeMonster = false,
             particleFxHandle = nil,
-            hasSynced = false
+            hasSynced = false,
         }
     end
 end
@@ -154,8 +154,8 @@ end
 -----------------------------------------------
 
 -- On PlayerLoaded, fetch the list of particleFxHandleList and sync to the entities
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function() 
-    fetchParticleFxHandleList() 
+RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
+    fetchParticleFxHandleList()
 end)
 
 -- Trigger this event to toggle the effect on/off
@@ -165,10 +165,10 @@ end)
 
 -- Anytime a client starts/stops the smokemonster effect, all clients will receive this event to sync the change
 -- This is necessary since the StartParticleFxLoopedOnEntity native does not sync automatically
----@param entityNetId - number - the network id of the entity that the particle effect will be attached to
----@param callerPlayerId - number - the PlayerId of the player who used the effect (used to make sure we dont sync the effect on their end twice)
----@param isPlayingEffect - boolean -whether the effect is being started or stopped (true for active, false for stopped)
-RegisterNetEvent('wp-smokemonster:client:SyncEffect', function(entityNetId, callerPlayerId, isPlayingEffect) 
+--- @param entityNetId - number - the network id of the entity that the particle effect will be attached to
+--- @param callerPlayerId - number - the PlayerId of the player who used the effect (used to make sure we dont sync the effect on their end twice)
+--- @param isPlayingEffect - boolean -whether the effect is being started or stopped (true for active, false for stopped)
+RegisterNetEvent("wp-smokemonster:client:SyncEffect", function(entityNetId, callerPlayerId, isPlayingEffect)
     if callerPlayerId ~= GetPlayerServerId(PlayerId()) then
         initializeParticleFxHandleListByNetId(entityNetId)
         particleFxHandleList[entityNetId].isSmokeMonster = isPlayingEffect
@@ -191,7 +191,7 @@ CreateThread(function()
     end
 end)
 
-AddEventHandler('onResourceStop', function(resourceName)
+AddEventHandler("onResourceStop", function(resourceName)
     if resourceName == ResourceName then
         if Config.UseSmokeMonsterScreenEffect then AnimpostfxStop("ChopVision") end
     end

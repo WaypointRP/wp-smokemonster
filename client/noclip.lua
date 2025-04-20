@@ -1,4 +1,4 @@
--- This is based on the noclip from qb-adminmenu, but modified to work with the smoke monster effect and slightly better controls 
+-- This is based on the noclip from qb-adminmenu, but modified to work with the smoke monster effect and slightly better controls
 
 local IsNoClipping      = false
 local PlayerPed         = nil
@@ -13,7 +13,7 @@ local ResourceName      = GetCurrentResourceName()
 -- The up/down movements look fine on the client moving, but for other clients it only updates in steps of 1.0
 -- Not sure why this issue is happening, but found that it works perfect if the player is in a vehicle
 -- Until a better solution can be found, the dummyVehicle is used so the movement is smooth between all clients
-local dummyVehicle = nil
+local dummyVehicle      = nil
 
 local MinY, MaxY        = -89.0, 89.0
 
@@ -22,28 +22,28 @@ local MinY, MaxY        = -89.0, 89.0
 ]]
 
 -- Perspective values
-local PedFirstPersonNoClip      = false      -- No Clip in first person when not in a vehicle
-local VehFirstPersonNoClip      = false      -- No Clip in first person when in a vehicle
+local PedFirstPersonNoClip  = false     -- No Clip in first person when not in a vehicle
+local VehFirstPersonNoClip  = false     -- No Clip in first person when in a vehicle
 
 -- Speed settings
-local Speed                     = 0.5         -- Default: 1
-local MaxSpeed                  = 16.0      -- Default: 16.0
-local MinSpeed                  = 0.1       -- Default: 0.1
+local Speed                 = 0.5      -- Default: 1
+local MaxSpeed              = 16.0     -- Default: 16.0
+local MinSpeed              = 0.1      -- Default: 0.1
 
 -- Key bindings
-local MOVE_FORWARDS             = 32        -- Default: W
-local MOVE_BACKWARDS            = 33        -- Default: S
-local MOVE_LEFT                 = 34        -- Default: A
-local MOVE_RIGHT                = 35        -- Default: D
-local MOVE_UP                   = 44        -- Default: Q
-local MOVE_DOWN                 = 20        -- Default: Z
+local MOVE_FORWARDS         = 32      -- Default: W
+local MOVE_BACKWARDS        = 33      -- Default: S
+local MOVE_LEFT             = 34      -- Default: A
+local MOVE_RIGHT            = 35      -- Default: D
+local MOVE_UP               = 44      -- Default: Q
+local MOVE_DOWN             = 20      -- Default: Z
 
-local SPEED_DECREASE            = 14        -- Default: Mouse wheel down
-local SPEED_INCREASE            = 15        -- Default: Mouse wheel up
-local SPEED_RESET               = 348       -- Default: Mouse wheel click
-local SPEED_SLOW_MODIFIER       = 36        -- Default: Left Control
-local SPEED_FAST_MODIFIER       = 21        -- Default: Left Shift
-local SPEED_FASTER_MODIFIER     = 19        -- Default: Left Alt
+local SPEED_DECREASE        = 14      -- Default: Mouse wheel down
+local SPEED_INCREASE        = 15      -- Default: Mouse wheel up
+local SPEED_RESET           = 348     -- Default: Mouse wheel click
+local SPEED_SLOW_MODIFIER   = 36      -- Default: Left Control
+local SPEED_FAST_MODIFIER   = 21      -- Default: Left Shift
+local SPEED_FASTER_MODIFIER = 19      -- Default: Left Alt
 
 
 local DisabledControls = function()
@@ -96,8 +96,8 @@ local CheckInputRotation = function()
     if newX ~= nil and newZ ~= nil then
         SetCamRot(Camera, vector3(newX, rotation.y, newZ), 2)
     end
-    
-    SetEntityHeading(NoClipEntity, math.max(0, (rotation.z % 360)))        
+
+    SetEntityHeading(NoClipEntity, math.max(0, (rotation.z % 360)))
 end
 
 local function spawnVehicle()
@@ -117,7 +117,7 @@ local function spawnVehicle()
     TaskWarpPedIntoVehicle(ped, vehicle, -1)
     TriggerEvent("vehiclekeys:client:SetOwner", vehiclePlate) -- This is so it doesnt show "you dont have keys"
     SetVehicleFuelLevel(vehicle, 100.0)
-    exports["LegacyFuel"]:SetFuel(vehicle, 100) -- so it doesnt beep low fuel
+    exports["LegacyFuel"]:SetFuel(vehicle, 100)               -- so it doesnt beep low fuel
     SetVehicleRadioEnabled(vehicle, false)
     SetVehicleEngineOn(vehicle, false, true, true)
     SetModelAsNoLongerNeeded(hash)
@@ -146,9 +146,9 @@ RunNoClipThread = function()
 
             local multi = 1.0
             if IsControlAlwaysPressed(0, SPEED_FAST_MODIFIER) then
-                multi = 2			
+                multi = 2
             elseif IsControlAlwaysPressed(0, SPEED_FASTER_MODIFIER) then
-                multi = 4			
+                multi = 4
             elseif IsControlAlwaysPressed(0, SPEED_SLOW_MODIFIER) then
                 multi = 0.25
             end
@@ -157,34 +157,34 @@ RunNoClipThread = function()
                 local pitch = GetCamRot(Camera, 0)
 
                 if pitch.x >= 0 then
-                    SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, 0.5*(Speed * multi), (pitch.x*((Speed/2) * multi))/89))
+                    SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, 0.5 * (Speed * multi), (pitch.x * ((Speed / 2) * multi)) / 89))
                 else
-                    SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, 0.5*(Speed * multi), -1*((math.abs(pitch.x)*((Speed/2) * multi))/89)))
+                    SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, 0.5 * (Speed * multi), -1 * ((math.abs(pitch.x) * ((Speed / 2) * multi)) / 89)))
                 end
             elseif IsControlAlwaysPressed(0, MOVE_BACKWARDS) then
                 local pitch = GetCamRot(Camera, 2)
 
                 if pitch.x >= 0 then
-                    SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, -0.5*(Speed * multi), -1*(pitch.x*((Speed/2) * multi))/89))
+                    SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, -0.5 * (Speed * multi), -1 * (pitch.x * ((Speed / 2) * multi)) / 89))
                 else
-                    SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, -0.5*(Speed * multi), ((math.abs(pitch.x)*((Speed/2) * multi))/89)))
+                    SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, -0.5 * (Speed * multi), ((math.abs(pitch.x) * ((Speed / 2) * multi)) / 89)))
                 end
             end
 
-            if IsControlAlwaysPressed(0, MOVE_LEFT) then 			
-                SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, -0.5*(Speed * multi), 0.0, 0.0))
+            if IsControlAlwaysPressed(0, MOVE_LEFT) then
+                SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, -0.5 * (Speed * multi), 0.0, 0.0))
             elseif IsControlAlwaysPressed(0, MOVE_RIGHT) then
-                SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.5*(Speed * multi), 0.0, 0.0))
+                SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.5 * (Speed * multi), 0.0, 0.0))
             end
 
-            if IsControlAlwaysPressed(0, MOVE_UP) then 
-                SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, 0.0, 0.5*(Speed * multi)))
+            if IsControlAlwaysPressed(0, MOVE_UP) then
+                SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, 0.0, 0.5 * (Speed * multi)))
             elseif IsControlAlwaysPressed(0, MOVE_DOWN) then
-                SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, 0.0, -0.5*(Speed * multi)))
+                SetEntityCoordsNoOffset(NoClipEntity, GetOffsetFromEntityInWorldCoords(NoClipEntity, 0.0, 0.0, -0.5 * (Speed * multi)))
             end
 
             local coords = GetEntityCoords(NoClipEntity)
-   
+
             RequestCollisionAtCoord(coords.x, coords.y, coords.z)
 
             FreezeEntityPosition(NoClipEntity, true)
@@ -241,7 +241,7 @@ ToggleNoClip = function(state)
         spawnVehicle()
         Wait(1000)
     end
-    PlayerPed    = PlayerPedId()
+    PlayerPed         = PlayerPedId()
     PlayerIsInVehicle = IsPedInAnyVehicle(PlayerPed, false)
     if PlayerIsInVehicle ~= 0 and IsPedDrivingVehicle(PlayerPed, GetVehiclePedIsIn(PlayerPed, false)) then
         NoClipEntity = GetVehiclePedIsIn(PlayerPed, false)
@@ -260,35 +260,34 @@ ToggleNoClip = function(state)
         if not PlayerIsInVehicle then
             ClearPedTasksImmediately(PlayerPed)
             if PedFirstPersonNoClip then
-                Wait(1000) -- Wait for the cinematic effect of the camera transitioning into first person 
+                Wait(1000) -- Wait for the cinematic effect of the camera transitioning into first person
             end
         else
             if VehFirstPersonNoClip then
-                Wait(1000) -- Wait for the cinematic effect of the camera transitioning into first person 
+                Wait(1000) -- Wait for the cinematic effect of the camera transitioning into first person
             end
         end
-
     else
         DeleteVehicle(dummyVehicle)
         SetEntityVisible(PlayerPedId(), true, false)
-        
+
         Wait(50)
         DestroyCamera(NoClipEntity)
         PlaySoundFromEntity(-1, "CANCEL", PlayerPed, "HUD_LIQUOR_STORE_SOUNDSET", 0, 0)
     end
-    
+
     SetUserRadioControlEnabled(not IsNoClipping)
-   
+
     if IsNoClipping then
         RunNoClipThread()
     end
 end
 
-RegisterNetEvent('wp-smokemonster:client:ToggleNoClip', function()
+RegisterNetEvent("wp-smokemonster:client:ToggleNoClip", function()
     ToggleNoClip(not IsNoClipping)
 end)
 
-AddEventHandler('onResourceStop', function(resourceName)
+AddEventHandler("onResourceStop", function(resourceName)
     if resourceName == ResourceName then
         FreezeEntityPosition(NoClipEntity, false)
         FreezeEntityPosition(PlayerPed, false)
